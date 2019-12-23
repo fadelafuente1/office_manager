@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:yom_office_manager/pages/profile_page.dart';
+import 'package:yom_office_manager/services/authentication.dart';
 import 'placeholder_widget.dart';
 import 'alert_dialog.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class Home extends StatefulWidget {
+  Home({Key key, this.auth, this.userId, this.logoutCallback})
+      : super(key: key);
+  final BaseAuth auth;
+  final VoidCallback logoutCallback;
+  final String userId;
   @override
   State<StatefulWidget> createState() {
     return _HomeState();
@@ -15,11 +22,12 @@ class Home extends StatefulWidget {
    ScrollController scrollController;
    int _currentIndex = 1;
    bool dialVisible = true;
-   final List<Widget> _children = [
-     PlaceholderWidget(Colors.white),
-     PlaceholderWidget(Colors.deepOrange),
-     PlaceholderWidget(Colors.green),
-     PlaceholderWidget(Colors.blue)
+   var pages = [
+     new PlaceholderWidget(Colors.white),
+     new PlaceholderWidget(Colors.deepOrange),
+     new PlaceholderWidget(Colors.green),
+     new PlaceholderWidget(Colors.grey),
+     new ProfilePage(),
    ];
    @override
     void initState() {
@@ -36,8 +44,14 @@ class Home extends StatefulWidget {
      return Scaffold(
        appBar: AppBar(
          title: Text('Oficce Manager'),
+         actions: <Widget>[
+            new FlatButton(
+                child: new Text('Logout',
+                    style: new TextStyle(fontSize: 17.0, color: Colors.white)),
+                onPressed: signOut)
+          ],
        ),
-       body: _children[_currentIndex],
+       body: pages[_currentIndex],
        floatingActionButton: buildSpeedDial(),
        bottomNavigationBar: buildBottomNavigation(),
        );
@@ -62,6 +76,10 @@ class Home extends StatefulWidget {
              icon: new Icon(Icons.rss_feed),
              title: new Text('Noticias')
            ),
+           BottomNavigationBarItem(
+             icon: Icon(Icons.calendar_today),
+             title: Text('Salas')
+             ),
            BottomNavigationBarItem(
              icon: Icon(Icons.person),
              title: Text('Perfil')
@@ -100,6 +118,15 @@ class Home extends StatefulWidget {
     );
   }
 
+  signOut() async {
+    try {
+      print('signout');
+      await widget.auth.signOut();
+      widget.logoutCallback();
+    } catch (e) {
+      print(e);
+    }
+  }
   void openSinglesForm() {
     showDialog(
       context: context,

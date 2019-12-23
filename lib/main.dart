@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_widget.dart';
+import 'package:yom_office_manager/pages/root_page.dart';
+import 'package:yom_office_manager/services/authentication.dart';
 
 void main() => runApp(App());
 
@@ -8,7 +9,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Oficce Manager',
-      home: Home(),
+      debugShowCheckedModeBanner: false,
+      home: new RootPage(auth: new Auth()),
     );
   }
 }
